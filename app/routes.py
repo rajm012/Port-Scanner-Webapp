@@ -1,7 +1,15 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from app import app
 from app.scanner import scan_ports, shodan_lookup, get_ttl, detect_os, geoip_lookup
 import threading
+import json
+import os
+import logging
+
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 scanning = False
 scanning_lock = threading.Lock()
@@ -31,7 +39,31 @@ def scan():
         results.append({"port": port, "status": status, "service": service})
 
     scan_ports(target_ip, port_range, progress_callback, scan_type)
+
+    # Save scan results to a JSON file
+    scan_results_file = "scan_results.json"
+    with open(scan_results_file, "w") as f:
+        json.dump(results, f, indent=4)
+
     return jsonify(results)
+
+
+@app.route('/download_results', methods=['GET'])
+def download_results():
+    """Endpoint to download the scan results as a JSON file."""
+    scan_results_file = "scan_results.json"
+    
+    if not os.path.exists(scan_results_file):
+        logging.error(f"File {scan_results_file} not found.")
+        return jsonify({"error": "No scan results found. Please run a scan first."}), 404
+
+    try:
+        return send_file(scan_results_file, as_attachment=True, mimetype="application/json")
+    
+    except Exception as e:
+        logging.error(f"Error sending file: {e}")
+        return jsonify({"error": "Failed to download results."}), 500
+
 
 @app.route('/shodan', methods=['POST'])
 def shodan():

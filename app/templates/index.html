@@ -1,69 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Port Scanner</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 </head>
+
 <body>
+
+    <header>
+        <h1>🔍 Advanced Port Scanner</h1>
+    </header>
+
     <div class="container">
-        <h1>Advanced Port Scanner</h1>
         <form id="scan-form">
+            <h2>Scan Settings</h2>
+            
             <label for="target_ip">Target IP:</label>
-            <input type="text" id="target_ip" name="target_ip" required>
+            <input type="text" id="target_ip" name="target_ip" placeholder="Enter target IP" required>
             
-            <label for="start_port">Start Port:</label>
-            <input type="number" id="start_port" name="start_port" value="1" required>
-            
-            <label for="end_port">End Port:</label>
-            <input type="number" id="end_port" name="end_port" value="1024" required>
-            
-            <label>Scan Type:</label>
-            <div class="radio-buttons">
-                <input type="radio" id="tcp" name="scan_type" value="tcp" checked>
-                <label for="tcp">TCP</label>
-                <input type="radio" id="udp" name="scan_type" value="udp">
-                <label for="udp">UDP</label>
-                <input type="radio" id="syn" name="scan_type" value="syn">
-                <label for="syn">SYN</label>
+            <div class="port-range">
+                <div>
+                    <label for="start_port">Start Port:</label>
+                    <input type="number" id="start_port" name="start_port" value="1" required>
+                </div>
+                <div>
+                    <label for="end_port">End Port:</label>
+                    <input type="number" id="end_port" name="end_port" value="1024" required>
+                </div>
             </div>
-            
-            <button type="submit">Start Scan</button>
-            <button type="button" id="clear-results">Clear Results</button>
+
+            <div class="scan-type-container">
+                <label class="scan-type">
+                    <input type="radio" name="scan_type" value="tcp" checked> TCP
+                </label>
+                <label class="scan-type">
+                    <input type="radio" name="scan_type" value="udp"> UDP
+                </label>
+                <label class="scan-type">
+                    <input type="radio" name="scan_type" value="syn"> SYN
+                </label>
+            </div>            
+
+            <button type="submit" class="scan-btn">🚀 Start Scan</button>
+            <button type="button" id="clear-results" class="clear-btn">🗑️ Clear Results</button>
         </form>
 
-        <!-- Scan Results Section (Hidden Initially) -->
+        <!-- Scan Results Section -->
         <div id="results" class="hidden">
-            <h2>Scan Results</h2>
-            <div id="open-unknown-results"></div>
-            <div id="closed-results">
-                <h3>Closed Ports</h3>
+            <h2>🔎 Scan Results</h2>
+            <button id="download-results" class="download-btn hidden">📥 Download Results</button>
+            
+            <!-- Scrollable results container -->
+            <div id="scan-results-container">
+                <div id="scan-results"></div>
             </div>
         </div>
 
-        <!-- Additional Tools Section -->
-        <h2>Additional Tools</h2>
+        <!-- Additional Tools -->
+        <h2>🛠️ Additional Tools</h2>
         <div class="tool-buttons">
-            <button id="shodan-lookup">Shodan Lookup</button>
-            <button id="geoip-lookup">GeoIP Lookup</button>
-            <button id="os-detection">Detect OS</button>
+            <button id="shodan-lookup">🌐 Shodan Lookup</button>
+            <button id="geoip-lookup">📍 GeoIP Lookup</button>
+            <button id="os-detection">💻 Detect OS</button>
         </div>
 
-        <!-- Scan Results Section (Hidden Initially) -->
-<div id="results" class="hidden">
-    <h2>Scan Results</h2>
-    <div id="all-results"></div>
-</div>
-
-        <!-- Additional Results Section (Hidden Initially) -->
+        <!-- Additional Results -->
         <div id="additional-results" class="hidden">
-            <h2>Additional Results</h2>
+            <h2>📊 Additional Results</h2>
             <div id="shodan-results"></div>
             <div id="geoip-results"></div>
             <div id="os-results"></div>
         </div>
     </div>
+
+    <footer>
+        <p>🔒 Security Tools | Built with ❤️</p>
+    </footer>
+
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
