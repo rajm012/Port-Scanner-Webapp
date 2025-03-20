@@ -117,53 +117,16 @@ footer {
     font-size: 14px;
 }
 
-/* Styling for Results */
-.result-card {
-    background: #222;
-    padding: 15px;
-    margin: 10px auto;
-    border-radius: 8px;
-    text-align: left;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
-    color: #fff;
-}
-
-.result-card h3 {
-    color: #ffcc00;
-    margin-bottom: 10px;
-}
-
-.result-card p {
-    margin: 5px 0;
-    font-size: 16px;
-}
-
-.port {
-    display: inline-block;
-    background: #007bff;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin: 2px;
-    font-weight: bold;
-}
-
 .open {
-    color: #00ff00;
+    color: green;
 }
 
 .filtered {
-    color: #ffa500;
+    color: #ffa600;
 }
 
 .closed {
     color: grey;
-}
-
-.error {
-    color: #ff5555;
 }
 
 .scan-type-container {
@@ -180,16 +143,6 @@ footer {
     font-weight: bold;
 }
 
-/* #scan-results-container {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    padding: 10px;
-    background: #f9f9f9;
-    margin-top: 10px;
-    display: none; 
-}
-
 #results:not(.hidden) + #scan-results-container {
     display: block;
 }
@@ -200,26 +153,85 @@ footer {
 
 .download-btn:not(.hidden) {
     display: inline-block;
-} */
-
-
-/* Ensure results section is scrollable */
-#scan-results-container {
-    max-height: 300px; /* Limits height */
-    overflow-y: auto;  /* Enables scrollbar */
-    border: 1px solid #ddd;
-    padding: 10px;
-    background: #f9f9f9;
-    margin-top: 10px;
-    display: none;  /* Hidden until results are available */
 }
-
-/* Show scan results when available */
-#results:not(.hidden) #scan-results-container {
-    display: block;
-}
-
-/* Ensure download button is visible after scan */
 .hidden {
     display: none;
+}
+
+/* Scrollable Results Container */
+.scrollable-results {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: rgb(122, 165, 182);
+    margin-top: 10px;
+}
+
+/* Individual Result Rows */
+.result-row {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.result-row:last-child {
+    border-bottom: none;
+}
+
+.result-row.open {
+    background-color: #c7ebcf;
+}
+
+.result-row.closed {
+    background-color: #e6d8aa;
+}
+
+.result-row.error {
+    background-color: #e7c1c4;
+}
+
+/* Additional Results Styling */
+.result-card {
+    background-color: skyblue;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-section {
+    margin-bottom: 20px;
+}
+
+.info-section h3 {
+    font-size: 18px;
+    color: green;
+    margin-bottom: 10px;
+}
+
+.info-section p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.port-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.port {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.error {
+    color: #dc3545;
+    font-weight: bold;
 }

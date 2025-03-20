@@ -6,13 +6,13 @@ import json
 import os
 import logging
 
-
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-
 scanning = False
 scanning_lock = threading.Lock()
+
+SCAN_RESULTS_FILE = os.path.join(os.path.dirname("E:\\4th Semester\\Port-Scanner-Webapp"), "scan_results.json")
 
 @app.route('/')
 def index():
@@ -40,9 +40,7 @@ def scan():
 
     scan_ports(target_ip, port_range, progress_callback, scan_type)
 
-    # Save scan results to a JSON file
-    scan_results_file = "scan_results.json"
-    with open(scan_results_file, "w") as f:
+    with open(SCAN_RESULTS_FILE, "w") as f:
         json.dump(results, f, indent=4)
 
     return jsonify(results)
@@ -51,14 +49,13 @@ def scan():
 @app.route('/download_results', methods=['GET'])
 def download_results():
     """Endpoint to download the scan results as a JSON file."""
-    scan_results_file = "scan_results.json"
-    
-    if not os.path.exists(scan_results_file):
-        logging.error(f"File {scan_results_file} not found.")
+
+    if not os.path.exists(SCAN_RESULTS_FILE):
+        logging.error(f"File {SCAN_RESULTS_FILE} not found.")
         return jsonify({"error": "No scan results found. Please run a scan first."}), 404
 
     try:
-        return send_file(scan_results_file, as_attachment=True, mimetype="application/json")
+        return send_file(SCAN_RESULTS_FILE, as_attachment=True, mimetype="application/json", download_name="scan_results.json")
     
     except Exception as e:
         logging.error(f"Error sending file: {e}")
