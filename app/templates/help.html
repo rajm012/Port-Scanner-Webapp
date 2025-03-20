@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help - Advanced Port Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>❓ Help - Advanced Port Scanner</h1>
+    </header>
+
+    <div class="container">
+        <h2>About the Web App</h2>
+        <p>
+            The <strong>Advanced Port Scanner</strong> is a tool designed to scan ports on a target IP address. 
+            It provides detailed information about open ports, services, and additional data such as geolocation, 
+            operating system detection, and Shodan lookup results.
+        </p>
+
+        <h2>Features</h2>
+        <div class="feature-list">
+            <div class="feature">
+                <h3>🔍 Port Scanning</h3>
+                <p>
+                    Scan a range of ports on a target IP address using TCP, UDP, or SYN scan methods. 
+                    Results include the port number, status (open/closed), and service running on the port.
+                </p>
+            </div>
+            <div class="feature">
+                <h3>🌐 Shodan Lookup</h3>
+                <p>
+                    Retrieve additional information about the target IP using Shodan, including open ports, 
+                    organization, ISP, and vulnerabilities.
+                </p>
+            </div>
+            <div class="feature">
+                <h3>📍 GeoIP Lookup</h3>
+                <p>
+                    Get geolocation data for the target IP, including city, region, country, and ISP.
+                </p>
+            </div>
+            <div class="feature">
+                <h3>💻 OS Detection</h3>
+                <p>
+                    Detect the operating system of the target IP based on TTL (Time to Live) values.
+                </p>
+            </div>
+            <div class="feature">
+                <h3>📥 Download Results</h3>
+                <p>
+                    Download the scan results as a JSON file for further analysis.
+                </p>
+            </div>
+        </div>
+
+        <h2>How to Use</h2>
+        <ol>
+            <li>Enter the target IP address in the "Target IP" field.</li>
+            <li>Specify the start and end port range for the scan.</li>
+            <li>Select the scan type (TCP, UDP, or SYN).</li>
+            <li>Click <strong>🚀 Start Scan</strong> to begin the scan.</li>
+            <li>View the results in the "Scan Results" section.</li>
+            <li>Use the additional tools (Shodan Lookup, GeoIP Lookup, OS Detection) for more information.</li>
+            <li>Click <strong>📥 Download Results</strong> to save the scan results.</li>
+        </ol>
+
+        <h2>Need More Help?</h2>
+        <p>
+            If you have any questions or need further assistance, please contact us at 
+            <div class="email">
+            <a href="syntaxajju@gmail.com">syntaxajju@gmail.com</a>
+            </div>
+        </p>
+    </div>
+
+    <!-- Floating Help Button -->
+    <a href="/" class="help-button">🏠</a>
+
+    <footer>
+        <p>🔒 Security Tools | Built with ❤️</p>
+    </footer>
+</body>
+</html>

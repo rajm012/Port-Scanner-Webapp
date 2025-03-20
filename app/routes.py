@@ -95,3 +95,8 @@ def os_detection():
 
     os_guess = detect_os(ttl)
     return jsonify({"os": os_guess, "ttl": ttl})
+
+
+@app.route('/help')
+def help():
+    return render_template('help.html')
