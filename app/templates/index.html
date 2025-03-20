@@ -1,31 +1,69 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Port Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Port Scanner</h1>
+        <form id="scan-form">
+            <label for="target_ip">Target IP:</label>
+            <input type="text" id="target_ip" name="target_ip" required>
+            
+            <label for="start_port">Start Port:</label>
+            <input type="number" id="start_port" name="start_port" value="1" required>
+            
+            <label for="end_port">End Port:</label>
+            <input type="number" id="end_port" name="end_port" value="1024" required>
+            
+            <label>Scan Type:</label>
+            <div class="radio-buttons">
+                <input type="radio" id="tcp" name="scan_type" value="tcp" checked>
+                <label for="tcp">TCP</label>
+                <input type="radio" id="udp" name="scan_type" value="udp">
+                <label for="udp">UDP</label>
+                <input type="radio" id="syn" name="scan_type" value="syn">
+                <label for="syn">SYN</label>
+            </div>
+            
+            <button type="submit">Start Scan</button>
+            <button type="button" id="clear-results">Clear Results</button>
+        </form>
 
-{% block content %}
-<h1>Advanced Port Scanner</h1>
-<form id="scan-form">
-    <label for="target_ip">Target IP:</label>
-    <input type="text" id="target_ip" name="target_ip" required>
-    
-    <label for="start_port">Start Port:</label>
-    <input type="number" id="start_port" name="start_port" value="1" required>
-    
-    <label for="end_port">End Port:</label>
-    <input type="number" id="end_port" name="end_port" value="1024" required>
-    
-    <label for="scan_type">Scan Type:</label>
-    <select id="scan_type" name="scan_type">
-        <option value="tcp">TCP</option>
-        <option value="udp">UDP</option>
-        <option value="syn">SYN</option>
-    </select>
-    
-    <button type="submit">Start Scan</button>
-</form>
+        <!-- Scan Results Section (Hidden Initially) -->
+        <div id="results" class="hidden">
+            <h2>Scan Results</h2>
+            <div id="open-unknown-results"></div>
+            <div id="closed-results">
+                <h3>Closed Ports</h3>
+            </div>
+        </div>
 
-<div id="results"></div>
+        <!-- Additional Tools Section -->
+        <h2>Additional Tools</h2>
+        <div class="tool-buttons">
+            <button id="shodan-lookup">Shodan Lookup</button>
+            <button id="geoip-lookup">GeoIP Lookup</button>
+            <button id="os-detection">Detect OS</button>
+        </div>
 
-<h2>Additional Tools</h2>
-<button id="shodan-lookup">Shodan Lookup</button>
-<button id="geoip-lookup">GeoIP Lookup</button>
-<button id="os-detection">Detect OS</button>
-{% endblock %}
+        <!-- Scan Results Section (Hidden Initially) -->
+<div id="results" class="hidden">
+    <h2>Scan Results</h2>
+    <div id="all-results"></div>
+</div>
+
+        <!-- Additional Results Section (Hidden Initially) -->
+        <div id="additional-results" class="hidden">
+            <h2>Additional Results</h2>
+            <div id="shodan-results"></div>
+            <div id="geoip-results"></div>
+            <div id="os-results"></div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

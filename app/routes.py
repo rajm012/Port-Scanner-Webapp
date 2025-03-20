@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 from app import app
 from app.scanner import scan_ports, shodan_lookup, get_ttl, detect_os, geoip_lookup
 import threading
@@ -32,7 +32,6 @@ def scan():
 
     scan_ports(target_ip, port_range, progress_callback, scan_type)
     return jsonify(results)
-
 
 @app.route('/shodan', methods=['POST'])
 def shodan():

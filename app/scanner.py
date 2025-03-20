@@ -6,9 +6,16 @@ import shodan
 import struct
 import time
 import requests
+import ctypes
+import sys
+import platform
 
 # Replace with your Shodan API key
-SHODAN_API_KEY = "enter-own-api-key"
+SHODAN_API_KEY = os.environ.get('SECRET_KEY')
+
+if platform.system() == "Windows":
+    socket.IPPROTO_IP = 0
+    socket.IP_HDRINCL = 2
 
 # Common services mapping
 COMMON_SERVICES = {
@@ -58,42 +65,117 @@ def scan_tcp_port(target_ip, port, progress_callback):
             progress_callback(port, "Open", service)
         else:
             progress_callback(port, "Closed", "N/A")
+
     except Exception as e:
         progress_callback(port, "Error", str(e))
+        sock.close()
 
 
 def scan_udp_port(target_ip, port, progress_callback):
     """Scan a single UDP port."""
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(10)  # Increase timeout for UDP
-        sock.sendto(b"\x00", (target_ip, port))  # Send empty UDP packet
+        sock.settimeout(3)  # Set a reasonable timeout
+
+        # Send an empty UDP packet
+        sock.sendto(b"\x00", (target_ip, port))
 
         try:
+            # Wait for a response
             data, _ = sock.recvfrom(1024)
             progress_callback(port, "Open", "UDP Response Received")
-
         except socket.timeout:
-            sock.sendto(b"\x00", (target_ip, port))
-            try:
-                data, _ = sock.recvfrom(1024)
-                progress_callback(port, "Open", "UDP Response Received")
-
-            except socket.timeout:
-                progress_callback(port, "Filtered", "No Response")
-
-    except Exception as e:
-        if "10054" in str(e):
-            progress_callback(port, "Error", "Connection forcibly closed by remote host")
-        else:
+            # No response received
+            progress_callback(port, "Filtered", "No Response")
+        except ConnectionResetError:
+            # Remote host forcibly closed the connection
+            progress_callback(port, "Closed", "Connection forcibly closed by remote host")
+        except Exception as e:
+            # Handle other exceptions
             progress_callback(port, "Error", str(e))
-
+    except Exception as e:
+        # Handle socket creation errors
+        progress_callback(port, "Error", str(e))
     finally:
         sock.close()
+
+def syn_scan(target_ip, port, progress_callback):
+    """Perform a SYN scan on a single port."""
+    if not is_admin():
+        progress_callback(port, "Error", "Admin privileges required for SYN scan.")
+        return
+
+    try:
+        # Create a raw socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)  # Include IP header
+        sock.settimeout(2)
+
+        # Craft a TCP SYN packet
+        source_port = 12345  # Random source port
+        seq_number = 0
+        ack_number = 0
+        tcp_header = struct.pack(
+            "!HHLLBBHHH",
+            source_port, port, seq_number, ack_number, 5 << 4, 0x02, 1024, 0, 0
+        )
+
+        # Craft the IP header
+        ip_header = struct.pack(
+            "!BBHHHBBH4s4s",
+            69, 0, 40, 0, 0, 64, 6, 0, socket.inet_aton("0.0.0.0"), socket.inet_aton(target_ip)
+        )
+
+        # Combine IP and TCP headers
+        packet = ip_header + tcp_header
+
+        # Send the SYN packet
+        sock.sendto(packet, (target_ip, 0))
+
+        # Receive the response
+        response, _ = sock.recvfrom(1024)
+        sock.close()
+
+        # Analyze the response
+        if response[33] == 0x12:  # SYN-ACK flag
+            progress_callback(port, "Open", "SYN-ACK Received")
+        elif response[33] == 0x14:  # RST flag
+            progress_callback(port, "Closed", "RST Received")
+        else:
+            progress_callback(port, "Filtered", "No Response")
+    except socket.timeout:
+        progress_callback(port, "Filtered", "No Response")
+    except Exception as e:
+        progress_callback(port, "Error", str(e))
+
+
+def is_admin():
+    """Check if the script is running with administrative privileges."""
+    try:
+        if platform.system() == "Windows":
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        else:
+            return os.geteuid() == 0
+    except:
+        return False
+
+
+def restart_with_admin():
+    """Restart the script with admin privileges."""
+    if platform.system() == "Windows":
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, f'"{sys.argv[0]}"', None, 1)
+    else:
+        os.execvp("sudo", ["sudo", "python3", sys.argv[0]] + sys.argv[1:])
+    sys.exit()
 
 
 def scan_ports(target_ip, port_range, progress_callback, scan_type="tcp"):
     """Scan ports using ThreadPoolExecutor."""
+    if scan_type == "syn" and not is_admin():
+        progress_callback(0, "Error", "Admin privileges required for SYN scan. Restarting with admin privileges...")
+        restart_with_admin()
+        return
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
         futures = []
         for port in port_range:
@@ -101,6 +183,8 @@ def scan_ports(target_ip, port_range, progress_callback, scan_type="tcp"):
                 futures.append(executor.submit(scan_tcp_port, target_ip, port, progress_callback))
             elif scan_type == "udp":
                 futures.append(executor.submit(scan_udp_port, target_ip, port, progress_callback))
+            elif scan_type == "syn":
+                futures.append(executor.submit(syn_scan, target_ip, port, progress_callback))
 
         for future in concurrent.futures.as_completed(futures):
             future.result()
