@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Advanced Port Scanner</h1>
+<form id="scan-form">
+    <label for="target_ip">Target IP:</label>
+    <input type="text" id="target_ip" name="target_ip" required>
+    
+    <label for="start_port">Start Port:</label>
+    <input type="number" id="start_port" name="start_port" value="1" required>
+    
+    <label for="end_port">End Port:</label>
+    <input type="number" id="end_port" name="end_port" value="1024" required>
+    
+    <label for="scan_type">Scan Type:</label>
+    <select id="scan_type" name="scan_type">
+        <option value="tcp">TCP</option>
+        <option value="udp">UDP</option>
+        <option value="syn">SYN</option>
+    </select>
+    
+    <button type="submit">Start Scan</button>
+</form>
+
+<div id="results"></div>
+
+<h2>Additional Tools</h2>
+<button id="shodan-lookup">Shodan Lookup</button>
+<button id="geoip-lookup">GeoIP Lookup</button>
+<button id="os-detection">Detect OS</button>
+{% endblock %}
